@@ -110,6 +110,13 @@ words. Details in [source-tiers.md](skills/citation-needed/references/source-tie
 | `just the problems` | Summary line plus only the non-verified rows |
 | `stop citation-needed` | Off for the rest of the session |
 
+## Cost
+
+Measured with `claude plugin details`: about 130 tokens added to every session for the
+skill's description, and about 2,500 tokens when the skill fires. The always-on hook is
+harness-only and adds no model context unless you create the flag file. Verification
+itself costs whatever the web searches cost; the skill caps them at three per claim.
+
 ## Evals
 
 The repo ships fixtures with planted errors and known-true claims, so scoring is

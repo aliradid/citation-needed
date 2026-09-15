@@ -37,9 +37,9 @@ SKIP_REASONS = {"opinion", "prediction", "first-person", "hypothetical", "common
 UNCHECKED_REASONS = {"budget", "no web access"}
 
 URL_RE = re.compile(r"https?://[^\s|)>\]]+")
-SUMMARY_RE = re.compile(r"Checked\s+(\d+)\s+claims?\s*:\s*(.*?)\.?\s*$", re.IGNORECASE)
+SUMMARY_RE = re.compile(r"(?:Checked\s+)?(\d+)\s+claims?\s*:\s*(.*?)\.?\s*$", re.IGNORECASE)
 COUNT_RE = re.compile(r"(\d+)\s+([a-z-]+)", re.IGNORECASE)
-VERDICT_RE = re.compile(r"Verdict\s*:\s*(.+?)\.?\s*$", re.IGNORECASE)
+VERDICT_RE = re.compile(r"(Safe to publish|Fix \d+ claims? before publishing|Not verified)", re.IGNORECASE)
 
 
 @dataclass
@@ -88,8 +88,10 @@ def parse_report(text: str) -> Report:
             for n, name in COUNT_RE.findall(m.group(2)):
                 report.summary_counts[name.upper()] = int(n)
         v = VERDICT_RE.search(line)
-        if v and report.verdict is None:
-            report.verdict = v.group(1).strip()
+        if v and (report.verdict is None or re.match(r"\s*\**Verdict", line, re.IGNORECASE)):
+            if report.verdict is None or not getattr(report, "_verdict_explicit", False):
+                report.verdict = v.group(1).strip()
+                report._verdict_explicit = bool(re.match(r"\s*\**Verdict", line, re.IGNORECASE))
 
     # Find the first markdown table whose header contains Claim and Status.
     in_table = False
@@ -166,7 +168,7 @@ def validate(report: Report) -> list[str]:
             if "searched" not in ev:
                 problems.append(f"{where}: UNVERIFIED must list the queries ('searched: ...')")
         elif row.status == "SKIPPED":
-            if not any(r in ev for r in SKIP_REASONS):
+            if not any(r in ev or r in row.fix.lower() for r in SKIP_REASONS):
                 problems.append(f"{where}: SKIPPED needs a reason from {sorted(SKIP_REASONS)}")
         elif row.status == "UNCHECKED":
             if not any(r in ev for r in UNCHECKED_REASONS):

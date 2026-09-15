@@ -1,22 +1,87 @@
 {
   "planted": [
-    {"id": "p1", "span": "first title came with Ferrari in 1994", "expected": ["CONTRADICTED"], "note": "Schumacher's 1994 title was with Benetton"},
-    {"id": "p2", "span": "As Niki Lauda put it", "expected": ["MISATTRIBUTED", "CONTRADICTED"], "note": "the quote is Ayrton Senna's"},
-    {"id": "p3", "span": "from 2011 to 2014", "expected": ["CONTRADICTED"], "note": "Vettel's titles were 2010 to 2013"},
-    {"id": "p4", "span": "first championship in 2022", "expected": ["CONTRADICTED"], "note": "Verstappen's first title was 2021"},
-    {"id": "p5", "span": "every single year since 1950", "expected": ["CONTRADICTED"], "note": "Monaco was absent in several years, e.g. 1951-1954 and 2020"}
+    {
+      "id": "p0",
+      "span": "One of them did it with a broken neck",
+      "expected": [
+        "CONTRADICTED",
+        "MISATTRIBUTED"
+      ],
+      "note": "No seven-time champion won a title with a broken neck; Fangio (five titles) broke his neck at Monza in 1952 and won again after recovering"
+    },
+    {
+      "id": "p1",
+      "span": "first title came with Ferrari in 1994",
+      "expected": [
+        "CONTRADICTED"
+      ],
+      "note": "Schumacher's 1994 title was with Benetton"
+    },
+    {
+      "id": "p2",
+      "span": "As Niki Lauda put it",
+      "expected": [
+        "MISATTRIBUTED",
+        "CONTRADICTED"
+      ],
+      "note": "the quote is Ayrton Senna's"
+    },
+    {
+      "id": "p3",
+      "span": "from 2011 to 2014",
+      "expected": [
+        "CONTRADICTED"
+      ],
+      "note": "Vettel's titles were 2010 to 2013"
+    },
+    {
+      "id": "p4",
+      "span": "first championship in 2022",
+      "expected": [
+        "CONTRADICTED"
+      ],
+      "note": "Verstappen's first title was 2021"
+    },
+    {
+      "id": "p5",
+      "span": "every single year since 1950",
+      "expected": [
+        "CONTRADICTED"
+      ],
+      "note": "Monaco was absent in several years, e.g. 1951-1954 and 2020"
+    }
   ],
   "true": [
-    {"span": "Michael Schumacher won seven world championships"},
-    {"span": "matched that record of seven titles in 2020"},
-    {"span": "Juan Manuel Fangio won five titles in the 1950s"},
-    {"span": "died at Imola on May 1, 1994"},
-    {"span": "only team to have competed in every Formula 1 season since 1950"},
-    {"span": "nine world titles across all classes"},
-    {"span": "youngest premier-class champion in 2013"}
+    {
+      "span": "Michael Schumacher won seven world championships"
+    },
+    {
+      "span": "matched that record of seven titles in 2020"
+    },
+    {
+      "span": "Juan Manuel Fangio won five titles in the 1950s"
+    },
+    {
+      "span": "died at Imola on May 1, 1994"
+    },
+    {
+      "span": "only team to have competed in every Formula 1 season since 1950"
+    },
+    {
+      "span": "nine world titles across all classes"
+    },
+    {
+      "span": "youngest premier-class champion in 2013"
+    }
   ],
   "skip": [
-    {"span": "greatest qualifying lap ever driven", "reason": "opinion"},
-    {"span": "will end up with more titles than either of them", "reason": "prediction"}
+    {
+      "span": "greatest qualifying lap ever driven",
+      "reason": "opinion"
+    },
+    {
+      "span": "will end up with more titles than either of them",
+      "reason": "prediction"
+    }
   ]
 }

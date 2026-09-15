@@ -105,22 +105,25 @@ Rules for verification:
    See `references/source-tiers.md`.
 3. **Independence.** Two sources are independent only if they are different
    publishers and neither is quoting, syndicating, or citing the other. Two articles
-   built on the same wire report count as one.
-4. **Open the source for anything that matters.** A search snippet is enough for a
+   built on the same wire report count as one. Two pages on the same site count as one.
+4. **Wikis are pointers, not sources.** Wikipedia, fandom wikis, forums, aggregators
+   and AI answer boxes can tell you where to look. Follow their footnote to the
+   underlying source and cite that. A wiki page alone never makes a claim VERIFIED.
+5. **Open the source for anything that matters.** A search snippet is enough for a
    simple, low-risk fact. For quotes, numbers, legal/medical/financial claims, and
    anything about a named person, fetch the page and read the relevant passage.
-5. **Quotes are exact.** Verify wording, speaker, and occasion. A quote with the
+6. **Quotes are exact.** Verify wording, speaker, and occasion. A quote with the
    right idea but different words is PARAPHRASED, not verified. A real quote from the
    wrong person is MISATTRIBUTED.
-6. **Numbers get a tolerance.** A rounded figure is fine when the rounding matches the
+7. **Numbers get a tolerance.** A rounded figure is fine when the rounding matches the
    text's precision ("about 110 m" for 110.6 m). A figure that is off beyond that, or
    uses the wrong unit or the wrong year's value, is CONTRADICTED.
-7. **Time-sensitive claims are checked against today's date.** "Current", "latest",
+8. **Time-sensitive claims are checked against today's date.** "Current", "latest",
    "record holder", "is the CEO" must hold today, not at your training cutoff. If the
    claim was true and is not any more, it is OUTDATED.
-8. **Budget.** Up to three searches per claim. After three, record what you searched
+9. **Budget.** Up to three searches per claim. After three, record what you searched
    and mark it UNVERIFIED. The user can continue from your queries.
-9. **Batch when you can.** If the harness gives you subagents, hand each verifier a
+10. **Batch when you can.** If the harness gives you subagents, hand each verifier a
    group of about five claims using `references/verifier-prompt.md` and merge the
    ledgers. Otherwise verify sequentially, highest risk first.
 
@@ -147,22 +150,47 @@ these as CONTRADICTED with "internal" as the source.
 
 ### 5. Report
 
-Use the format in `references/report-format.md`. It has three parts:
+The report has a fixed shape because tools parse it (`scripts/validate_report.py`).
+Full details and examples are in `references/report-format.md`; the shape is:
 
-1. **Summary line.** Counts by status and one verdict: "Safe to publish" when nothing
-   is CONTRADICTED, OUTDATED, MISATTRIBUTED, PARAPHRASED or MISLEADING, otherwise
-   "Fix N claims before publishing". If nothing was verified against sources, the
-   verdict is "Not verified".
-2. **Ledger.** One row per claim: number, verbatim span, status, evidence (URLs and a
-   few words on what each says), and a proposed fix for anything that is not
-   VERIFIED or SKIPPED.
+```
+Checked 12 claims: 8 verified, 1 partial, 1 unverified, 2 contradicted, 0 skipped.
+Verdict: Fix 2 claims before publishing.
+
+## Ledger
+
+| # | Claim | Status | Evidence | Fix |
+| --- | --- | --- | --- | --- |
+| 1 | "July 16, 1968" | CONTRADICTED | https://... — launch date given as July 16, 1969 | July 16, 1969 |
+| 2 | "the greatest mission ever" | SKIPPED | opinion | |
+
+## Annotated copy
+
+Apollo 11 launched on July 16, 1968 [CN-1 CONTRADICTED: July 16, 1969 — nasa.gov] and ...
+```
+
+1. **Summary line, then verdict.** The first line of the report is `Checked N claims:`
+   followed by the count of every status that appears. The second line is `Verdict:`
+   with one of: `Safe to publish` (no row is CONTRADICTED, OUTDATED, MISATTRIBUTED,
+   PARAPHRASED or MISLEADING), `Fix N claims before publishing` (N = those rows), or
+   `Not verified` (no web tool, nothing checked). If you had no web tool, put
+   `Not verified: no web access in this session.` above the summary line. Otherwise
+   do not add any preamble.
+2. **Ledger.** Always a markdown table with exactly these five columns, one row per
+   claim in text order, the verbatim span in quotes in the Claim column. Evidence holds
+   the URLs, each followed by a dash and a few words on what the page says; for
+   UNVERIFIED it holds `searched:` and your queries; for SKIPPED it holds only the
+   reason (opinion, prediction, first-person, hypothetical, common knowledge); for
+   UNCHECKED it holds `budget` or `no web access`. Fix holds the replacement text for
+   CONTRADICTED, OUTDATED, MISATTRIBUTED, PARAPHRASED and MISLEADING rows and is empty
+   otherwise. Never render the ledger as bullets or headings.
 3. **Annotated copy** (audit mode, when the text is short enough to return; guard
-   mode always). The text with a marker inserted immediately after each problem claim:
-   `[CN-7 CONTRADICTED: launched 16 July 1969, not 1968 — nasa.gov]`. Verified and
-   skipped claims get no marker. The prose is otherwise untouched.
+   mode always). The text unchanged except for a marker inserted immediately after
+   each problem claim: `[CN-7 CONTRADICTED: launched 16 July 1969, not 1968 — nasa.gov]`.
+   VERIFIED, PARTIAL and SKIPPED claims get no marker.
 
-In guard mode, the "Receipts" section after the draft is the ledger with SKIPPED rows
-left out.
+In guard mode, deliver the draft with markers, then a `## Receipts` heading with the
+ledger minus SKIPPED rows, then the summary and verdict lines.
 
 ## Hard rules
 
@@ -176,8 +204,8 @@ left out.
    contains the exact words.
 5. Never drop a claim from the ledger because it was hard. Hard claims get UNVERIFIED
    with the queries you tried.
-6. When you cannot verify anything (no web tool), say so in the first line. Do not
-   deliver a ledger that looks checked when it was not.
+6. When you had no web tool, the report starts with `Not verified: no web access in
+   this session.` Do not deliver a ledger that looks checked when it was not.
 7. Do not fact-check the user's private opinions or plans. Skip them, say so, move on.
 
 ## When to break the rules
@@ -203,6 +231,8 @@ Before you send the report, confirm:
    fix and the source that supports the fix.
 4. Every UNVERIFIED row lists the queries you ran.
 5. The summary line's counts match the ledger.
-6. You did not edit the user's text anywhere except by inserting markers.
+6. The ledger is a five-column table, the summary line starts with `Checked`, and the
+   verdict line starts with `Verdict:`.
+7. You did not edit the user's text anywhere except by inserting markers.
 
-If all six hold, send.
+If all seven hold, send.
