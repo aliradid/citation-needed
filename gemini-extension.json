@@ -1,0 +1,6 @@
+{
+  "name": "citation-needed",
+  "version": "1.0.0",
+  "description": "No claim without a receipt: verify every factual claim in a draft against live sources and return an evidence ledger.",
+  "contextFileName": "GEMINI.md"
+}

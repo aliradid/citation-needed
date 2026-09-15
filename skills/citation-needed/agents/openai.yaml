@@ -1,0 +1,7 @@
+interface:
+  display_name: "Citation Needed"
+  short_description: "Fact-check any draft against live sources"
+  default_prompt: "Use $citation-needed to verify every factual claim in this draft and return the evidence ledger."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,23 @@
+{
+  "planted": [
+    {"id": "p1", "span": "Netscape in 1997", "expected": ["CONTRADICTED"], "note": "JavaScript was created in 1995"},
+    {"id": "p2", "span": "founded in 2010", "expected": ["CONTRADICTED"], "note": "GitHub was founded in 2008"},
+    {"id": "p3", "span": "originally designed at Facebook", "expected": ["CONTRADICTED"], "note": "Kubernetes was designed at Google"},
+    {"id": "p4", "span": "TypeScript was created by Google", "expected": ["CONTRADICTED"], "note": "TypeScript was created by Microsoft"},
+    {"id": "p5", "span": "Dennis Ritchie famously said", "expected": ["MISATTRIBUTED", "CONTRADICTED"], "note": "the quote is Linus Torvalds, 2000"}
+  ],
+  "true": [
+    {"span": "Linux in August 1991"},
+    {"span": "Guido van Rossum"},
+    {"span": "Sun Microsystems in 1995"},
+    {"span": "written by Torvalds in 2005"},
+    {"span": "Stack Overflow launched in 2008"},
+    {"span": "January 9, 2007"},
+    {"span": "Docker was released in 2013"},
+    {"span": "Rust 1.0 shipped in May 2015"}
+  ],
+  "skip": [
+    {"span": "most readable language ever designed", "reason": "opinion"},
+    {"span": "will probably replace C in most kernels", "reason": "prediction"}
+  ]
+}

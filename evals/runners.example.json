@@ -1,0 +1,30 @@
+{
+  "claude": {
+    "command": [
+      "claude",
+      "--print",
+      "--output-format", "json",
+      "--no-session-persistence",
+      "--setting-sources", "",
+      "--tools", "WebSearch,WebFetch",
+      "--allowedTools", "WebSearch,WebFetch",
+      "--append-system-prompt", "{SKILL}",
+      "--max-budget-usd", "3",
+      "{PROMPT}"
+    ],
+    "response_format": "claude-json"
+  },
+  "codex": {
+    "command": [
+      "codex", "exec",
+      "--ephemeral",
+      "--ignore-user-config",
+      "--skip-git-repo-check",
+      "--sandbox", "read-only",
+      "--enable", "web_search",
+      "-o", "{OUT}",
+      "{PROMPT}"
+    ],
+    "response_format": "text"
+  }
+}

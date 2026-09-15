@@ -1,0 +1,29 @@
+{
+  "name": "citation-needed",
+  "version": "1.0.0",
+  "description": "No claim without a receipt. Verifies every factual claim in a draft against live sources and returns an evidence ledger. Never silently rewrites.",
+  "author": {
+    "name": "aliradid",
+    "url": "https://github.com/aliradid"
+  },
+  "homepage": "https://github.com/aliradid/citation-needed",
+  "repository": "https://github.com/aliradid/citation-needed",
+  "license": "MIT",
+  "keywords": ["fact-checking", "verification", "citations", "sources", "writing", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Citation Needed",
+    "shortDescription": "Fact-check any draft against live sources",
+    "longDescription": "Extracts every check-worthy factual claim from a draft, verifies each one with web search against the two-source-or-one-primary standard, and returns an evidence ledger with honest statuses. Flags problems in place; never silently rewrites.",
+    "developerName": "aliradid",
+    "category": "Writing",
+    "capabilities": ["Instructions"],
+    "websiteURL": "https://github.com/aliradid/citation-needed",
+    "defaultPrompt": [
+      "Use citation-needed to fact-check this draft.",
+      "Verify every claim in this text and give me the ledger.",
+      "Just the problems: which claims in this draft are wrong?"
+    ],
+    "brandColor": "#B45309"
+  }
+}

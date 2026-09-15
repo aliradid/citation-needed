@@ -1,0 +1,14 @@
+{
+  "name": "citation-needed",
+  "displayName": "Citation Needed",
+  "version": "1.0.0",
+  "description": "No claim without a receipt. Verifies every factual claim in a draft against live sources and returns an evidence ledger. Never silently rewrites.",
+  "author": {
+    "name": "aliradid",
+    "url": "https://github.com/aliradid"
+  },
+  "homepage": "https://github.com/aliradid/citation-needed",
+  "repository": "https://github.com/aliradid/citation-needed",
+  "license": "MIT",
+  "keywords": ["fact-checking", "verification", "citations", "sources", "writing", "journalism", "skills"]
+}

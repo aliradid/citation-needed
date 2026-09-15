@@ -1,0 +1,18 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "citation-needed",
+  "description": "No claim without a receipt: fact-check any draft against live sources and get an evidence ledger.",
+  "owner": {
+    "name": "aliradid",
+    "url": "https://github.com/aliradid"
+  },
+  "plugins": [
+    {
+      "name": "citation-needed",
+      "description": "Verify every factual claim in a draft against live sources. Evidence ledger, honest statuses, never a silent rewrite.",
+      "source": "./",
+      "category": "writing",
+      "keywords": ["fact-checking", "verification", "citations", "writing"]
+    }
+  ]
+}

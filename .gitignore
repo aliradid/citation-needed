@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+evals/runners.json
+evals/results/**/*.report.md
+evals/results/**/*.error.txt

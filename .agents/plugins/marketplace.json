@@ -1,0 +1,21 @@
+{
+  "name": "citation-needed",
+  "interface": {
+    "displayName": "Citation Needed"
+  },
+  "plugins": [
+    {
+      "name": "citation-needed",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/aliradid/citation-needed.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Writing"
+    }
+  ]
+}

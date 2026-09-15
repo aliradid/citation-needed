@@ -1,0 +1,23 @@
+{
+  "planted": [
+    {"id": "p1", "span": "June 1965", "expected": ["CONTRADICTED"], "note": "Tereshkova flew on 16 June 1963"},
+    {"id": "p2", "span": "July 16, 1968", "expected": ["CONTRADICTED"], "note": "Apollo 11 launched July 16, 1969"},
+    {"id": "p3", "span": "one giant leap for humanity", "expected": ["PARAPHRASED", "CONTRADICTED"], "note": "actual wording: 'one giant leap for mankind'"},
+    {"id": "p4", "span": "third person to walk on the Moon", "expected": ["CONTRADICTED"], "note": "Aldrin was the second"},
+    {"id": "p5", "span": "78 million kilometres", "expected": ["CONTRADICTED"], "note": "Mars averages about 228 million km from the Sun"}
+  ],
+  "true": [
+    {"span": "April 12, 1961"},
+    {"span": "July 20, 1969"},
+    {"span": "Michael Collins stayed in lunar orbit"},
+    {"span": "roughly 111 metres tall"},
+    {"span": "born in Ohio in 1930"},
+    {"span": "September 5, 1977"},
+    {"span": "Space Shuttle Discovery in April 1990"},
+    {"span": "continuously occupied since November 2000"}
+  ],
+  "skip": [
+    {"span": "I have visited the Kennedy Space Center twice", "reason": "first-person"},
+    {"span": "most impressive engineering project of the twentieth century", "reason": "opinion"}
+  ]
+}

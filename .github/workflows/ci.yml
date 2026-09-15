@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Fixtures are consistent
+        run: python scripts/run_evals.py validate
+
+  cursor-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if the .cursor copy differs from SKILL.md
+        run: |
+          cmp skills/citation-needed/SKILL.md .cursor/skills/citation-needed/SKILL.md || {
+            echo "::error::.cursor copy is out of sync. Run: cp skills/citation-needed/SKILL.md .cursor/skills/citation-needed/SKILL.md"
+            exit 1
+          }
