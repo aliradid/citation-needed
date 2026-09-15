@@ -101,7 +101,7 @@ class FixtureTests(unittest.TestCase):
 
     def test_runner_substitution_inserts_skill_when_no_token(self):
         # Runner without {SKILL} gets the skill prepended to the prompt via stdin.
-        runner = {"command": [sys.executable, "-c", "import sys; print(sys.stdin.read())"]}
+        runner = {"command": [sys.executable, "-X", "utf8", "-c", "import sys; print(sys.stdin.read())"]}
         out = run_evals.run_runner(runner, "TASK", timeout=60)
         self.assertIn("<skill>", out)
         self.assertIn("TASK", out)
@@ -111,7 +111,7 @@ class FixtureTests(unittest.TestCase):
             "command": [
                 sys.executable,
                 "-c",
-                "import sys; open(sys.argv[1],'w').write('R:'+sys.argv[2])",
+                "import sys; open(sys.argv[1],'w',encoding='utf-8').write('R:'+sys.argv[2])",
                 "{OUT}",
                 "{PROMPT}",
             ]

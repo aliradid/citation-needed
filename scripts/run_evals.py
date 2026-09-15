@@ -227,12 +227,13 @@ def run_runner(runner: dict, prompt: str, timeout: int) -> str:
     ]
     stdin_text = None if any("{PROMPT}" in c for c in runner["command"]) else prompt
     proc = subprocess.run(
-        cmd, input=stdin_text, capture_output=True, text=True, timeout=timeout, cwd=tmpdir
+        cmd, input=stdin_text, capture_output=True, text=True, encoding="utf-8",
+        errors="replace", timeout=timeout, cwd=tmpdir,
     )
     if proc.returncode != 0 and not (out_file and os.path.exists(out_file)):
         raise RuntimeError(f"runner exited {proc.returncode}: {proc.stderr[-2000:]}")
     if out_file and os.path.exists(out_file):
-        return Path(out_file).read_text(encoding="utf-8")
+        return Path(out_file).read_text(encoding="utf-8", errors="replace")
     text = proc.stdout
     fmt = runner.get("response_format", "text")
     if fmt == "claude-json":
