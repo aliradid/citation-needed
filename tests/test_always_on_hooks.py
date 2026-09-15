@@ -19,9 +19,9 @@ def run_hook(kind: str, config_dir: str) -> str:
         cmd = ["node", str(HOOKS / "always-on.mjs")]
     else:
         cmd = ["sh", str(HOOKS / "always-on.sh")]
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=30)
+    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", env=env, timeout=30)
     assert proc.returncode == 0, proc.stderr
-    return proc.stdout
+    return proc.stdout.replace("\r\n", "\n")
 
 
 def expected_body() -> str:
