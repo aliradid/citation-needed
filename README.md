@@ -128,7 +128,9 @@ python3 scripts/run_evals.py validate
 python3 scripts/run_evals.py run --runner claude
 ```
 
-See [evals/README.md](evals/README.md) and the latest [results](evals/results/).
+Latest results, both Claude Code and Codex with live search: **15/16 planted errors
+caught with the exact expected status, 0/23 false alarms on true claims, 0/6 opinions
+wrongly checked.** Tables and the one miss explained in [evals/RESULTS.md](evals/RESULTS.md).
 
 `scripts/validate_report.py` lints any report against the format, so you can wire it
 into a CI step that fails a content pipeline when the verdict is not "Safe to publish".

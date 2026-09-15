@@ -19,6 +19,7 @@ Subcommands:
     validate                         check fixtures and truth files
     run --runner NAME [options]      run fixtures through an agent CLI and score
     score REPORT.md TRUTH.json       score an existing report
+    rescore RESULTS_DIR              re-score saved reports after a scorer change
 
 ``run`` reads runner definitions from evals/runners.json (copy
 evals/runners.example.json). A runner is a command list; the token {SKILL}
@@ -32,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import difflib
 import json
 import os
 import re
@@ -113,17 +115,39 @@ def validate_fixtures() -> list[str]:
     return problems
 
 
-def match_row(report: Report, span: str):
+def match_rows(report: Report, span: str) -> list:
+    """Rows whose claim overlaps the span: the claim contains the span, or the span
+    contains the claim (min 6 chars). Agents often split one sentence into several
+    atomic claims, so a planted error may live in any of them."""
     ns = _norm(span)
-    best = None
+    out = []
     for row in report.rows:
         nc = _norm(row.claim)
         if not nc:
             continue
         if ns in nc or (len(nc) >= 6 and nc in ns):
-            if best is None or len(nc) < len(_norm(best.claim)):
-                best = row
-    return best
+            out.append(row)
+            continue
+        # Partial overlap: the agent trimmed or extended the span ("his first title
+        # came with Ferrari" vs "first title came with Ferrari in 1994").
+        m = difflib.SequenceMatcher(None, ns, nc).find_longest_match(0, len(ns), 0, len(nc))
+        if m.size >= 10 and m.size >= 0.6 * min(len(ns), len(nc)):
+            out.append(row)
+    return out
+
+
+def judge_span(report: Report, span: str):
+    """Return (status, row) for a span: a problem status if any overlapping row has
+    one, else the status of the row with the largest overlap."""
+    rows = match_rows(report, span)
+    if not rows:
+        return None, None
+    for row in rows:
+        if row.status in PROBLEM_STATUSES:
+            return row.status, row
+    ns = _norm(span)
+    best = max(rows, key=lambda r: min(len(_norm(r.claim)), len(ns)))
+    return best.status, best
 
 
 def score(report_text: str, truth: dict) -> dict:
@@ -136,38 +160,38 @@ def score(report_text: str, truth: dict) -> dict:
     details = []
     caught = exact = missed_rows = 0
     for p in planted:
-        row = match_row(report, p["span"])
+        status, row = judge_span(report, p["span"])
         if row is None:
             missed_rows += 1
             details.append(("planted", p["span"], "NOT IN LEDGER", "missed"))
             continue
-        if row.status in PROBLEM_STATUSES:
+        if status in PROBLEM_STATUSES:
             caught += 1
-            ok = row.status in p.get("expected", [])
+            ok = status in p.get("expected", [])
             exact += ok
-            details.append(("planted", p["span"], row.status, "caught" if ok else "caught (different status)"))
+            details.append(("planted", p["span"], status, "caught" if ok else "caught (different status)"))
         else:
-            details.append(("planted", p["span"], row.status, "missed"))
+            details.append(("planted", p["span"], status, "missed"))
 
     false_alarms = 0
     for t in trues:
-        row = match_row(report, t["span"])
-        st = row.status if row else "NOT IN LEDGER"
-        if row and row.status in PROBLEM_STATUSES:
+        status, row = judge_span(report, t["span"])
+        st = status if row else "NOT IN LEDGER"
+        if row and status in PROBLEM_STATUSES:
             false_alarms += 1
             details.append(("true", t["span"], st, "FALSE ALARM"))
         else:
             details.append(("true", t["span"], st, "ok"))
 
     skip_violations = 0
-    for s in skips:
-        row = match_row(report, s["span"])
-        st = row.status if row else "NOT IN LEDGER"
-        if row and row.status != "SKIPPED":
+    for sk in skips:
+        status, row = judge_span(report, sk["span"])
+        st = status if row else "NOT IN LEDGER"
+        if row and status != "SKIPPED":
             skip_violations += 1
-            details.append(("skip", s["span"], st, "should be SKIPPED"))
+            details.append(("skip", sk["span"], st, "should be SKIPPED"))
         else:
-            details.append(("skip", s["span"], st, "ok"))
+            details.append(("skip", sk["span"], st, "ok"))
 
     return {
         "rows": len(report.rows),
@@ -247,7 +271,11 @@ def fmt_results_md(runner_name: str, results: list[tuple[str, dict]], stamp: str
         for kind, span, st, outcome in r["details"]:
             lines.append(f"| {kind} | {span} | {st} | {outcome} |")
         if r["lint_problems"]:
-            lines += ["", "Lint:", ""] + [f"- {p}" for p in r["lint_problems"]]
+            groups: dict[str, int] = {}
+            for p in r["lint_problems"]:
+                key = re.sub(r"^row \d+ \(line \d+\): ", "", p)
+                groups[key] = groups.get(key, 0) + 1
+            lines += ["", "Lint:", ""] + [f"- {n}× {k}" if n > 1 else f"- {k}" for k, n in groups.items()]
         lines.append("")
     return "\n".join(lines)
 
@@ -302,11 +330,30 @@ def cmd_run(args) -> int:
     return 0
 
 
+def cmd_rescore(args) -> int:
+    d = Path(args.dir)
+    runner_name = d.name.rsplit("-", 4)[0] if "-" in d.name else d.name
+    results = []
+    truths = {name: truth for name, _t, truth in load_fixtures()}
+    for rep in sorted(d.glob("*.report.md")):
+        name = rep.name[: -len(".report.md")]
+        if name not in truths:
+            print(f"skip {rep.name}: no fixture named {name}")
+            continue
+        results.append((name, score(rep.read_text(encoding="utf-8"), truths[name])))
+    md = fmt_results_md(runner_name, results, d.name)
+    (d / "RESULTS.md").write_text(md, encoding="utf-8")
+    print(md.split("## Details")[0])
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("validate").set_defaults(fn=cmd_validate)
     s = sub.add_parser("score"); s.add_argument("report"); s.add_argument("truth"); s.set_defaults(fn=cmd_score)
+    rs = sub.add_parser("rescore", help="re-score every *.report.md in a results dir and rewrite RESULTS.md")
+    rs.add_argument("dir"); rs.set_defaults(fn=cmd_rescore)
     r = sub.add_parser("run")
     r.add_argument("--runner", required=True)
     r.add_argument("--runners", default=str(ROOT / "evals" / "runners.json"))

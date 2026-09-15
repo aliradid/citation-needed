@@ -31,9 +31,15 @@ python3 scripts/run_evals.py run --runner claude    # needs the claude CLI and w
 python3 scripts/run_evals.py run --runner codex     # needs the codex CLI
 ```
 
-Results land in `results/<runner>-<timestamp>/` with each raw report and a
+Latest numbers: [RESULTS.md](RESULTS.md). Results land in `results/<runner>-<timestamp>/` with each raw report and a
 `RESULTS.md` table. Commit `RESULTS.md` files you want to share; raw reports are
 gitignored.
+
+Re-score saved reports after changing the scorer:
+
+```bash
+python3 scripts/run_evals.py rescore evals/results/claude-2026-09-15-2106
+```
 
 Score a report you produced by hand:
 

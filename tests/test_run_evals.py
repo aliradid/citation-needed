@@ -44,6 +44,24 @@ class ScoreTests(unittest.TestCase):
         self.assertEqual(r["skip_violations"], 0)
         self.assertEqual(r["lint_problems"], [])
 
+    def test_split_claims_credit_any_flagged_atom(self):
+        # Agent split "first title came with Ferrari in 1994" into two rows; the
+        # flagged atom must count as caught even though the shorter row is VERIFIED.
+        report = """Checked 2 claims: 1 verified, 1 contradicted.
+Verdict: Fix 1 claims before publishing.
+
+## Ledger
+
+| # | Claim | Status | Evidence | Fix |
+| --- | --- | --- | --- | --- |
+| 1 | "in 1994" | VERIFIED | https://x.org/a — yes; https://y.org/b — yes | |
+| 2 | "his first title came with Ferrari" | CONTRADICTED | https://x.org/c — Benetton | Benetton |
+"""
+        truth = {"planted": [{"id": "p", "span": "first title came with Ferrari in 1994", "expected": ["CONTRADICTED"]}], "true": [], "skip": []}
+        r = run_evals.score(report, truth)
+        self.assertEqual(r["planted_caught"], 1)
+        self.assertEqual(r["planted_exact"], 1)
+
     def test_missing_row_counts_as_missed(self):
         truth = dict(TRUTH, planted=TRUTH["planted"] + [{"id": "p9", "span": "not in report", "expected": ["CONTRADICTED"]}])
         r = run_evals.score(REPORT, truth)
