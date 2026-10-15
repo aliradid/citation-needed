@@ -81,9 +81,9 @@ Verdict: Fix 2 claims before publishing.
 
 | # | Claim | Status | Evidence | Fix |
 | --- | --- | --- | --- | --- |
-| 1 | "July 16, 1968" | CONTRADICTED | nasa.gov/mission/apollo-11 — launch date July 16, 1969 | July 16, 1969 |
-| 2 | "one giant leap for humanity" | PARAPHRASED | nasa.gov/history/... — transcript reads "for mankind" | "one giant leap for mankind" |
-| 3 | "first woman in space" | VERIFIED | esa.int/... — Tereshkova, Vostok 6, 1963; britannica.com/... — same | |
+| 1 | "July 16, 1968" | CONTRADICTED | https://www.nasa.gov/mission/apollo-11/ — launch date July 16, 1969 | July 16, 1969 |
+| 2 | "one giant leap for humanity" | PARAPHRASED | https://www.nasa.gov/history/... — transcript reads "for mankind" | "one giant leap for mankind" |
+| 3 | "first woman in space" | VERIFIED | https://www.esa.int/... — Tereshkova, Vostok 6, 1963; https://www.britannica.com/... — same | |
 | 4 | "the most impressive project of the century" | SKIPPED | opinion | |
 | … | | | | |
 
@@ -94,7 +94,7 @@ landed four days later. Armstrong said it was "one giant leap for humanity"
 [CN-2 PARAPHRASED: "for mankind" — nasa.gov].
 ```
 
-Every URL in the ledger came back from a tool call in that session. If the agent could
+(URLs above are illustrative.) In a real report, every URL in the ledger came back from a tool call in that session. If the agent could
 not find a source, the row says `UNVERIFIED` and lists the queries it tried, so you can
 pick up where it stopped.
 
