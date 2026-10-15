@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this skill, please cite it."
+title: "citation-needed"
+type: software
+authors:
+  - alias: aliradid
+repository-code: "https://github.com/aliradid/citation-needed"
+license: MIT
+abstract: "An agent skill that extracts factual claims from a draft, verifies each against live sources, and returns an evidence ledger. Never invents a source."
