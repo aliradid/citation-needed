@@ -94,7 +94,7 @@ landed four days later. Armstrong said it was "one giant leap for humanity"
 [CN-2 PARAPHRASED: "for mankind" — nasa.gov].
 ```
 
-(URLs above are illustrative.) In a real report, every URL in the ledger came back from a tool call in that session. If the agent could
+See a full unedited run, scored against ground truth, in [docs/example-report.md](docs/example-report.md). (URLs above are illustrative.) In a real report, every URL in the ledger came back from a tool call in that session. If the agent could
 not find a source, the row says `UNVERIFIED` and lists the queries it tried, so you can
 pick up where it stopped.
 
