@@ -2,6 +2,11 @@
 
 **No claim without a receipt.**
 
+[![ci](https://github.com/aliradid/citation-needed/actions/workflows/ci.yml/badge.svg)](https://github.com/aliradid/citation-needed/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![agents: 10](https://img.shields.io/badge/agents-10-8A2BE2.svg)](INSTALL.md)
+[![evals: 15/16 caught, 0 false alarms](https://img.shields.io/badge/evals-15%2F16%20caught%2C%200%20false%20alarms-brightgreen.svg)](evals/RESULTS.md)
+
 An agent skill that makes AI-written text checkable. It pulls every factual claim out of
 a draft, verifies each one against live sources with the agent's own web tools, and
 returns an evidence ledger you can open link by link. It flags what is wrong, in place.
@@ -16,6 +21,43 @@ claude plugin install citation-needed@citation-needed
 ```
 
 Other harnesses: [INSTALL.md](INSTALL.md).
+
+## Who this is for
+
+- **Anyone publishing AI-written text:** blog posts, newsletters, YouTube scripts, docs, reports.
+- **Teams with a content pipeline:** lint the report in CI and block a publish on
+  "Fix N claims" ([recipe](docs/ci.md)).
+- **People who got burned once:** a wrong year, a misquote, a stat that was true in 2019.
+
+## Why not just ask the model "is this accurate?"
+
+| | "Is this accurate?" | citation-needed |
+| --- | --- | --- |
+| Source of truth | The model's memory | Live searches from this session |
+| Links | Often remembered, sometimes invented | Only URLs a tool returned |
+| Coverage | Whatever it feels like mentioning | Every hard claim gets a ledger row |
+| Opinions and predictions | Mixed in or "corrected" | Triaged out as SKIPPED |
+| When it finds nothing | Often says "looks correct" | `UNVERIFIED` plus the queries tried |
+| Your text | May be silently rewritten | Never touched; fixes are proposed |
+| Checkable | By reading it | By opening the links, or `validate_report.py` |
+
+## FAQ
+
+**Does it need an API key or a service?** No. It uses the web search and fetch tools
+your agent already has. If the agent has none, it says so on the first line and marks
+everything `UNCHECKED` rather than guessing.
+
+**Is it a magic truth machine?** No. It is a discipline: extract, triage, verify, show
+receipts. Sources can be wrong, and a wiki is treated as a pointer, not a source. The
+evals report one real miss, openly ([RESULTS.md](evals/RESULTS.md)).
+
+**Will it rewrite my article?** Never. It annotates in place and proposes fixes; you apply.
+
+**How much does it cost?** About 130 tokens per session idle, about 2,500 when it fires,
+plus the web searches (capped at three per claim).
+
+**Can I add a platform?** Yes. Adapters are thin wrappers around one `SKILL.md`. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## The problem
 
@@ -39,9 +81,9 @@ Verdict: Fix 2 claims before publishing.
 
 | # | Claim | Status | Evidence | Fix |
 | --- | --- | --- | --- | --- |
-| 1 | "July 16, 1968" | CONTRADICTED | nasa.gov/mission/apollo-11 — launch date July 16, 1969 | July 16, 1969 |
-| 2 | "one giant leap for humanity" | PARAPHRASED | nasa.gov/history/... — transcript reads "for mankind" | "one giant leap for mankind" |
-| 3 | "first woman in space" | VERIFIED | esa.int/... — Tereshkova, Vostok 6, 1963; britannica.com/... — same | |
+| 1 | "July 16, 1968" | CONTRADICTED | https://www.nasa.gov/mission/apollo-11/ — launch date July 16, 1969 | July 16, 1969 |
+| 2 | "one giant leap for humanity" | PARAPHRASED | https://www.nasa.gov/history/... — transcript reads "for mankind" | "one giant leap for mankind" |
+| 3 | "first woman in space" | VERIFIED | https://www.esa.int/... — Tereshkova, Vostok 6, 1963; https://www.britannica.com/... — same | |
 | 4 | "the most impressive project of the century" | SKIPPED | opinion | |
 | … | | | | |
 
@@ -52,7 +94,7 @@ landed four days later. Armstrong said it was "one giant leap for humanity"
 [CN-2 PARAPHRASED: "for mankind" — nasa.gov].
 ```
 
-Every URL in the ledger came back from a tool call in that session. If the agent could
+(URLs above are illustrative.) In a real report, every URL in the ledger came back from a tool call in that session. If the agent could
 not find a source, the row says `UNVERIFIED` and lists the queries it tried, so you can
 pick up where it stopped.
 
@@ -153,6 +195,21 @@ The agent already has web search. It already reads pages. What it lacks is the
 discipline: extract, triage, verify, judge, show receipts, never fake a source. That is
 a few hundred lines of instructions, versioned in git, auditable by anyone, and it runs
 wherever your agent runs.
+
+## Roadmap and ideas wanted
+
+Good first contributions, all scoped small:
+
+- A new eval fixture in a domain we do not cover yet (medicine, law, finance, sport).
+  Planted errors need one unambiguous answer. See [evals/README.md](evals/README.md).
+- Eval runs on more harnesses (Gemini CLI, OpenCode, Kimi, Qwen) added to `evals/RESULTS.md`.
+- Install-path fixes for a platform you use, tested on a stated version.
+- Translations of the report labels, as long as the ten statuses stay machine-readable.
+
+## If it saved you from a wrong date
+
+Star the repo so the next person finds it, and tell us what it caught or missed in a
+[wrong-verdict issue](.github/ISSUE_TEMPLATE/wrong-verdict.md). Misses make the skill better.
 
 ## Contributing
 
